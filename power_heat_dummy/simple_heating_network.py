@@ -16,12 +16,4 @@ pandapipes.create_pipes_from_parameters(net, from_junctions=[3, 1, 3], to_juncti
 # create loads
 pandapipes.create_sinks(net, junctions=[1, 2], mdot_kg_per_s=1, index=[1, 2])
 
-# run pipeflow
-pandapipes.pipeflow(net, stop_condition="tol", iter=100, friction_model="colebrook",
-                    mode="all", transient=False, nonlinear_method="automatic", tol_res=1e-4)
 
-# print(net.res_junction)
-# print(net.res_pipe)
-# print(net.res_sink)
-# net.res_pipe.to_csv("pipes_example.csv")
-# net.res_junction.to_csv("junctions_example.csv")

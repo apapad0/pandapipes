@@ -25,12 +25,4 @@ pandapower.create_lines_from_parameters(net, from_buses=[2, 2, 3, 8, 8, 5], to_b
 pandapower.create_loads(net, buses=[1, 3, 4, 5, 6], p_mw=[0.2, 0.5, 0.5, 0.2, 0.2], q_mvar=0, index=[i for i in range(1, 6)])
 
 
-# run powerflow
-pandapower.runpp(net)
-
-# # print voltage per bus
-# for index in range(1, 7):
-#     print(str(net.bus.name[index]) + ': ' + str(round(net.res_bus.vm_pu[index], 7)))
-# print(str(net.bus.name[8]) + ': ' + str(round(net.res_bus.vm_pu[8], 7)))
-# print(str(net.bus.name[9]) + ': ' + str(round(net.res_bus.vm_pu[9], 7)))
 
