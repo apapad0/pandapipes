@@ -13,7 +13,7 @@ class P2HControlMultiEnergy(Controller):
     A controller to be used in a multinet. Converts power consumption to heat production.
     """
 
-    def __init__(self, multinet, element_index_power, element_index_heat, cop_factor, temp_diff,
+    def __init__(self, multinet, element_index_power, element_index_heat, cop_factor, out_temp,
                  name_power_net='power', name_heat_net='heat', in_service=True, order=0, level=0,
                  drop_same_existing_ctrl=False, initial_run=True, **kwargs):
         super().__init__(multinet, in_service, order, level, drop_same_existing_ctrl=drop_same_existing_ctrl,
@@ -27,7 +27,7 @@ class P2HControlMultiEnergy(Controller):
         self.mw_thermal = None
         self.mdot_kg_per_s = None
         self.applied = False
-        self.temp_diff = temp_diff
+        self.out_temp = out_temp
 
     def initialize_control(self, multinet):
         self.applied = False
@@ -42,8 +42,12 @@ class P2HControlMultiEnergy(Controller):
         except (ValueError, TypeError, InvalidIndexError):
             power_load = multinet['nets'][self.name_net_power].load.loc[self.elm_idx_power, 'p_mw'].values \
                          * multinet['nets'][self.name_net_power].load.loc[self.elm_idx_power, 'scaling'].values
+
+        connection_junction_index = multinet['nets'][self.name_net_heat]['source']['junction'][0]
+        in_temp = multinet['nets'][self.name_net_heat]['res_junction']["t_k"][connection_junction_index]
+        temp_diff = self.out_temp - in_temp
         self.mw_thermal = power_load * self.cop_factor
-        self.mdot_kg_per_s = self.mw_thermal / (4.182 * 0.001 * self.temp_diff)
+        self.mdot_kg_per_s = self.mw_thermal / (4.182 * 0.001 * temp_diff)
         self.write_to_net(multinet)
         self.applied = True
 
