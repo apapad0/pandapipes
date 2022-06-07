@@ -44,7 +44,7 @@ class P2HControlMultiEnergy(Controller):
                          * multinet['nets'][self.name_net_power].load.loc[self.elm_idx_power, 'scaling'].values
 
         connection_junction_index = multinet['nets'][self.name_net_heat]['source']['junction'][0]
-        in_temp = multinet['nets'][self.name_net_heat]['res_junction']["t_k"][connection_junction_index]
+        in_temp = multinet['nets'][self.name_net_heat]['junction']["tfluid_k"][connection_junction_index]
         temp_diff = self.out_temp - in_temp
         self.mw_thermal = power_load * self.cop_factor
         self.mdot_kg_per_s = self.mw_thermal / (4.182 * 0.001 * temp_diff)
