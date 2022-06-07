@@ -22,9 +22,19 @@ p2h_id_heat = pandapipes.create_source(net_heat, junction=1, mdot_kg_per_s=0, na
 p2h_ctrl = P2HControlMultiEnergy(multinet, p2h_id_el, p2h_id_heat, cop_factor=4, out_temp=373.15,
                                  name_power_net="power", name_heat_net="heat")
 
+pipeflow_attributes = {
+    "stop_condition": "tol",
+    "iter": 100,
+    "friction_model": "colebrook",
+    "mode": "all",
+    "transient": False,
+    "nonlinear_method": "automatic",
+    "tol_res": 1e-4
+}
+
+
 # run simulation:
-run_control(multinet, stop_condition="tol", iter=100, friction_model="colebrook",
-                    mode="all", transient=False, nonlinear_method="automatic", tol_res=1e-4)
+run_control(multinet, **pipeflow_attributes)
 
 print(net_heat.source.loc[p2h_id_heat, 'mdot_kg_per_s'])
 
