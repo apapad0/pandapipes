@@ -19,8 +19,31 @@ t_source = net["ext_grid"]["t_k"][0]
 t_load = [net["junction"]["tfluid_k"][junction] for junction in sink_junctions]
 mdot = [mwth / (4.182 * 0.001 * (t_source - t_load[index])) for index, mwth in enumerate(sink_p_mwth)]
 
+mwel = 0.15
+cop = 4
+mdot_source = mwel * cop / (4.182 * 0.001 * 50)
+
+
 # create loads
 pandapipes.create_sinks(net, junctions=sink_junctions, mdot_kg_per_s=mdot, index=[1, 2])
+# create source
+# pandapipes.create_source(net, junction=1, mdot_kg_per_s=mdot_source, index=1)
+
+pipeflow_attributes = {
+    "stop_condition": "tol",
+    "iter": 100,
+    "friction_model": "colebrook",
+    "mode": "all",
+    "transient": False,
+    "nonlinear_method": "automatic",
+    "tol_res": 1e-4
+}
+
+# run pipeflow
+# pandapipes.pipeflow(net=net, **pipeflow_attributes)
+#
+# print(net['res_junction'])
+# print(net['res_pipe']['mdot_from_kg_per_s'])
 
 
 
