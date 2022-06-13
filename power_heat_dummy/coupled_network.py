@@ -14,7 +14,7 @@ add_net_to_multinet(multinet, net_heat, 'heat')
 
 
 # create elements corresponding to conversion units:
-p2h_id_el = pandapower.create_load(net_power, bus=8, p_mw=0.07, name="power to heat consumption")
+p2h_id_el = pandapower.create_load(net_power, bus=8, p_mw=0.15, name="power to heat consumption")
 p2h_id_heat = pandapipes.create_source(net_heat, junction=1, mdot_kg_per_s=0, name="power to heat feed in")
 
 
@@ -32,14 +32,12 @@ pipeflow_attributes = {
     "tol_res": 1e-4
 }
 
-
 # run simulation:
 run_control(multinet, **pipeflow_attributes)
 
 print(net_heat.source.loc[p2h_id_heat, 'mdot_kg_per_s'])
 
-buses = list([i for i in range(1, 7)]) + [8, 9]
-for bus in buses:
-    print(str(net_power.bus.name[bus]) + ': ' + str(round(net_power.res_bus.vm_pu[bus], 7)))
-
-print(net_heat.res_junction)
+print(multinet['nets']['power']['res_bus']['vm_pu'])
+print(multinet['nets']['heat']['res_junction'])
+print(multinet['nets']['heat']['res_pipe']['mdot_from_kg_per_s'])
+print(multinet['nets']['power']['res_ext_grid']['p_mw'])
