@@ -19,8 +19,8 @@ p2h_id_heat = pandapipes.create_source(net_heat, junction=1, mdot_kg_per_s=0, na
 
 
 # create coupling controllers:
-p2h_ctrl = P2HControlMultiEnergy(multinet, p2h_id_el, p2h_id_heat, cop_factor=4, out_temp=373.15,
-                                 name_power_net="power", name_heat_net="heat")
+# p2h_ctrl = P2HControlMultiEnergy(multinet, p2h_id_el, p2h_id_heat, cop_factor=4, out_temp=373.15,
+#                                  name_power_net="power", name_heat_net="heat")
 
 pipeflow_attributes = {
     "stop_condition": "tol",
