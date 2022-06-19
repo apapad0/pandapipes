@@ -659,3 +659,25 @@ def coupled_g2p_const_control(multinet, element_index_power, element_index_gas, 
                                 drop_same_existing_ctrl=drop_same_existing_ctrl,
                                 initial_run=initial_run, calc_gas_from_power=power_led, **kwargs)
     return const, g2p
+
+
+def coupled_p2h_const_control(multinet, element_index_power, element_index_heat, cop_factor, out_temp=373.15,
+                              name_power_net='power', name_heat_net='heat', profile_name=None,
+                              data_source=None, scale_factor=1.0, in_service=True,
+                              order=(0, 1), level=0, drop_same_existing_ctrl=False,
+                              matching_params=None, initial_run=False, **kwargs):
+    net_power = multinet['nets'][name_power_net]
+
+    const = ConstControl(
+        net_power, element='load', variable='p_mw', element_index=element_index_power,
+        profile_name=profile_name, data_source=data_source, scale_factor=scale_factor,
+        in_service=in_service, order=order[0], level=level,
+        drop_same_existing_ctrl=drop_same_existing_ctrl, matching_params=matching_params,
+        initial_run=initial_run, **kwargs)
+
+    p2h = P2HControlMultiEnergy(multinet, element_index_power, element_index_heat, cop_factor, out_temp,
+                                name_power_net, name_heat_net, in_service, order[1], level,
+                                drop_same_existing_ctrl=drop_same_existing_ctrl,
+                                initial_run=initial_run, **kwargs)
+    return const, p2h
+
