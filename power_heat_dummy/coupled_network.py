@@ -32,12 +32,12 @@ pipeflow_attributes = {
     "tol_res": 1e-4
 }
 
-# run simulation:
-run_control(multinet, **pipeflow_attributes)
-
-print(net_heat.source.loc[p2h_id_heat, 'mdot_kg_per_s'])
-
-print(multinet['nets']['power']['res_bus']['vm_pu'])
-print(multinet['nets']['heat']['res_junction'])
-print(multinet['nets']['heat']['res_pipe']['mdot_from_kg_per_s'])
-print(multinet['nets']['power']['res_ext_grid']['p_mw'])
+# # run simulation:
+# run_control(multinet, **pipeflow_attributes)
+#
+# print(net_heat.source.loc[p2h_id_heat, 'mdot_kg_per_s'])
+#
+# print(multinet['nets']['power']['res_bus']['vm_pu'])
+# print(multinet['nets']['heat']['res_junction'])
+# print(multinet['nets']['heat']['res_pipe']['mdot_from_kg_per_s'])
+# print(multinet['nets']['power']['res_ext_grid']['p_mw'])
