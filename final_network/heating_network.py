@@ -47,7 +47,7 @@ load_mcal_h = [40, 100, 40, 40, 40, 40, 40, 40, 20, 40, 60, 20, 40, 40, 40, 40, 
                40, 40, 40, 40]
 t_source = net["ext_grid"]["t_k"][0]
 t_load = [net["junction"]["tfluid_k"][junction] for junction in sink_junction]
-mdot = [(cal*4.184/60) / (4.182 * (t_source - t_load[index])) for index, cal in enumerate(load_mcal_h)]  # TODO * 0.001
+mdot = [cal * 0.001162 / (4.182 * 0.001 * (t_source - t_load[index])) for index, cal in enumerate(load_mcal_h)]
 
 # create loads
 pandapipes.create_sinks(net, junctions=sink_junction, mdot_kg_per_s=mdot)
@@ -68,3 +68,6 @@ pandapipes.pipeflow(net=net, **pipeflow_attributes)
 
 print(net['res_junction'])
 print(net['res_pipe']['mdot_from_kg_per_s'])
+
+net.res_junction.to_csv("junction_pressure_temperature.csv")
+net.res_pipe.mdot_from_kg_per_s.to_csv("pipes_mdot.csv")
