@@ -73,3 +73,5 @@ pandapower.runpp(net)
 
 print(net['res_bus']['vm_pu'])
 print(net['res_ext_grid']['p_mw'])
+
+net.res_bus.vm_pu.to_csv("bus_voltage.csv")
