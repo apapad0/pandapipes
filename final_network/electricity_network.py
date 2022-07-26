@@ -1,4 +1,6 @@
 import pandapower
+import pandapower.plotting as plot
+import matplotlib.pyplot as plt
 
 # create empty network
 net = pandapower.create_empty_network()
@@ -69,9 +71,13 @@ pandapower.create_sgens(net, buses=[5, 9, 11, 12, 13, 14, 17, 18, 22, 25],
                         p_mw=[0.015, 0.020, 0.015, 0.015, 0.015, 0.010, 0.025, 0.030, 0.025, 0.025])
 
 # run powerflow
-pandapower.runpp(net)
+# pandapower.runpp(net)
+# bc = plot.create_bus_collection(net, buses=net.bus.index, size=80, zorder=1)
+# lc = plot.create_line_collection(net, lines=net.line.index, zorder=2)
+# plot.draw_collections([lc, bc])
+# plt.show()
 
-print(net['res_bus']['vm_pu'])
-print(net['res_ext_grid']['p_mw'])
+# print(net['res_bus']['vm_pu'])
+# print(net['res_ext_grid']['p_mw'])
 
-net.res_bus.vm_pu.to_csv("bus_voltage.csv")
+# net.res_bus.vm_pu.to_csv("bus_voltage.csv")
