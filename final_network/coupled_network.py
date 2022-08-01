@@ -12,10 +12,8 @@ multinet = create_empty_multinet('power_heat_multinet')
 add_net_to_multinet(multinet, net_power, 'power')
 add_net_to_multinet(multinet, net_heat, 'heat')
 
-
-load1 = 15 * 0.001162
-load2 = 10 * 0.001162
-
+load1 = 50 * 0.001162 / 4
+load2 = 40 * 0.001162 / 4
 
 # create elements corresponding to conversion units:
 # connection 1
@@ -25,10 +23,12 @@ p2h_id_heat_1 = pandapipes.create_source(net_heat, junction=5, mdot_kg_per_s=0, 
 p2h_id_el_2 = pandapower.create_load(net_power, bus=18, p_mw=load2, name="power to heat consumption 2")
 p2h_id_heat_2 = pandapipes.create_source(net_heat, junction=64, mdot_kg_per_s=0, name="power to heat feed in 2")
 
-
 # create coupling controllers:
-p2h_ctrl = P2HControlMultiEnergy(multinet, p2h_id_el_1, p2h_id_heat_1, cop_factor=4, out_temp=378.15,
-                                 name_power_net="power", name_heat_net="heat")
+p2h_ctrl_1 = P2HControlMultiEnergy(multinet, p2h_id_el_1, p2h_id_heat_1, cop_factor=4, out_temp=378.15,
+                                   name_power_net="power", name_heat_net="heat")
+
+p2h_ctrl_2 = P2HControlMultiEnergy(multinet, p2h_id_el_2, p2h_id_heat_2, cop_factor=4, out_temp=378.15,
+                                   name_power_net="power", name_heat_net="heat")
 
 pipeflow_attributes = {
     "stop_condition": "tol",
@@ -41,9 +41,9 @@ pipeflow_attributes = {
 }
 
 # # run simulation:
-# run_control(multinet, **pipeflow_attributes)
+run_control(multinet, **pipeflow_attributes)
 #
-# print(multinet['nets']['power']['res_bus']['vm_pu'])
-# print(multinet['nets']['heat']['res_junction'])
+print(multinet['nets']['power']['res_bus']['vm_pu'])
+print(multinet['nets']['heat']['res_junction'])
 # print(multinet['nets']['heat']['res_pipe']['mdot_from_kg_per_s'])
 # print(multinet['nets']['power']['res_ext_grid']['p_mw'])
