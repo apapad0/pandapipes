@@ -70,6 +70,9 @@ for i in range(len(load_buses)):
 pandapower.create_sgens(net, buses=[5, 9, 11, 12, 13, 14, 17, 18, 22, 25],
                         p_mw=[0.015, 0.020, 0.015, 0.015, 0.015, 0.010, 0.025, 0.030, 0.025, 0.025])
 
+pandapower.create_sgens(net, buses=[19, 23, 26], p_mw=[0.015, 0.015, 0.015])
+
+
 # run powerflow
 # pandapower.runpp(net)
 # bc = plot.create_bus_collection(net, buses=net.bus.index, size=80, zorder=1)
