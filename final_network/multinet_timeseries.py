@@ -50,8 +50,8 @@ def create_output_writers(multinet, time_steps=None):
 
 
 if __name__ == "__main__":
-    timesteps = range(11)
-    ds = create_datasource("loads3.csv")
+    timesteps = range(45)
+    ds = create_datasource("load_cop4.csv")
     ows = create_output_writers(multinet, timesteps)
     coupled_p2h_const_control(multinet, p2h_id_el_1, p2h_id_heat_1, cop_factor=cop, out_temp=378.15,
                               name_power_net="power", name_heat_net="heat", profile_name=["load_1"], data_source=ds)
