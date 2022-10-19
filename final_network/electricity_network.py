@@ -74,13 +74,14 @@ pandapower.create_sgens(net, buses=[19, 23, 26], p_mw=[0.005, 0.010, 0.005])
 
 
 # run powerflow
-# pandapower.runpp(net)
-# bc = plot.create_bus_collection(net, buses=net.bus.index, size=80, zorder=1)
-# lc = plot.create_line_collection(net, lines=net.line.index, zorder=2)
-# plot.draw_collections([lc, bc])
-# plt.show()
+if __name__ == "__main__":
+    pandapower.runpp(net)
+    bc = plot.create_bus_collection(net, buses=net.bus.index, size=80, zorder=1)
+    lc = plot.create_line_collection(net, lines=net.line.index, zorder=2)
+    plot.draw_collections([lc, bc])
+    plt.show()
 
-# print(net['res_bus']['vm_pu'])
-# print(net['res_ext_grid']['p_mw'])
+    print(net['res_bus']['vm_pu'])
+    print(net['res_ext_grid']['p_mw'])
 
-# net.res_bus.vm_pu.to_csv("bus_voltage.csv")
+    # net.res_bus.vm_pu.to_csv("bus_voltage.csv")

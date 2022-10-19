@@ -49,14 +49,16 @@ pipeflow_attributes = {
 }
 
 # # run simulation:
-# run_control(multinet, **pipeflow_attributes)
-#
-# print(multinet['nets']['power']['res_bus']['vm_pu'])
-# print(multinet['nets']['heat']['res_junction'])
+if __name__ == "__main__":
+    run_control(multinet, **pipeflow_attributes)
 
-# print("PASS" if all(0.9 < multinet['nets']['power']['res_bus']['vm_pu'][index] < 1.1 for index in range(1, 27)) else "FAIL")
-# print(multinet['nets']['heat']['res_pipe']['mdot_from_kg_per_s'])
-# print(multinet['nets']['power']['res_ext_grid']['p_mw'])
+    print(multinet['nets']['power']['res_bus']['vm_pu'])
+    print(multinet['nets']['heat']['res_junction'])
 
-# multinet['nets']['power']['res_bus']['vm_pu'].to_csv("bus_voltage.csv")
-# multinet['nets']['heat']['res_junction']['t_k'].to_csv("temperature.csv")
+    print("PASS" if all(0.9 < multinet['nets']['power']['res_bus']['vm_pu'][index] < 1.1 for index in range(1, 27))
+          else "FAIL")
+    print(multinet['nets']['heat']['res_pipe']['mdot_from_kg_per_s'])
+    print(multinet['nets']['power']['res_ext_grid']['p_mw'])
+
+    # multinet['nets']['power']['res_bus']['vm_pu'].to_csv("bus_voltage.csv")
+    # multinet['nets']['heat']['res_junction']['t_k'].to_csv("temperature.csv")

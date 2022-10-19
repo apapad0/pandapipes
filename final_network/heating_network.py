@@ -64,10 +64,10 @@ pipeflow_attributes = {
 }
 
 # run pipeflow
-# pandapipes.pipeflow(net=net, **pipeflow_attributes)
-#
-# print(net['res_junction'])
-# print(net['res_pipe']['mdot_from_kg_per_s'])
-#
-# net.res_junction.to_csv("junction_pressure_temperature.csv")
-# net.res_pipe.mdot_from_kg_per_s.to_csv("pipes_mdot.csv")
+if __name__ == "__main__":
+    pandapipes.pipeflow(net=net, **pipeflow_attributes)
+    print(net['res_junction'])
+    print(net['res_pipe']['mdot_from_kg_per_s'])
+
+    # net.res_junction.to_csv("junction_pressure_temperature.csv")
+    # net.res_pipe.mdot_from_kg_per_s.to_csv("pipes_mdot.csv")
