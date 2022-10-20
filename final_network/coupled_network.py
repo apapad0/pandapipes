@@ -29,13 +29,13 @@ p2h_id_el_3 = pandapower.create_load(net_power, bus=19, p_mw=load3, name="power 
 p2h_id_heat_3 = pandapipes.create_source(net_heat, junction=64, mdot_kg_per_s=0, name="power to heat feed in 3")
 
 # create coupling controllers:
-p2h_ctrl_1 = P2HControlMultiEnergy(multinet, p2h_id_el_1, p2h_id_heat_1, cop_factor=cop, out_temp=378.15,
+p2h_ctrl_1 = P2HControlMultiEnergy(multinet, p2h_id_el_1, p2h_id_heat_1, cop_factor=cop, out_temp=368.15,
                                    name_power_net="power", name_heat_net="heat")
 
-p2h_ctrl_2 = P2HControlMultiEnergy(multinet, p2h_id_el_2, p2h_id_heat_2, cop_factor=cop, out_temp=378.15,
+p2h_ctrl_2 = P2HControlMultiEnergy(multinet, p2h_id_el_2, p2h_id_heat_2, cop_factor=cop, out_temp=368.15,
                                    name_power_net="power", name_heat_net="heat")
 
-p2h_ctrl_3 = P2HControlMultiEnergy(multinet, p2h_id_el_3, p2h_id_heat_3, cop_factor=cop, out_temp=378.15,
+p2h_ctrl_3 = P2HControlMultiEnergy(multinet, p2h_id_el_3, p2h_id_heat_3, cop_factor=cop, out_temp=368.15,
                                    name_power_net="power", name_heat_net="heat")
 
 pipeflow_attributes = {
