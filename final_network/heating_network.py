@@ -4,18 +4,7 @@ import pandapipes
 net = pandapipes.create_empty_network(fluid="water")
 
 # create junctions
-pandapipes.create_junctions(net, nr_junctions=64, pn_bar=18, tfluid_k=[378.15, 378.15, 348.15, 378.15, 348.15, 378.15,
-                                                                       348.15, 378.15, 348.15, 378.15, 348.15, 378.15,
-                                                                       348.15, 378.15, 348.15, 378.15, 348.15, 378.15,
-                                                                       348.15, 378.15, 348.15, 378.15, 378.15, 348.15,
-                                                                       378.15, 348.15, 378.15, 348.15, 378.15, 348.15,
-                                                                       378.15, 348.15, 378.15, 348.15, 378.15, 378.15,
-                                                                       348.15, 378.15, 348.15, 378.15, 348.15, 378.15,
-                                                                       348.15, 378.15, 378.15, 348.15, 378.15, 348.15,
-                                                                       378.15, 348.15, 378.15, 348.15, 378.15, 348.15,
-                                                                       378.15, 348.15, 378.15, 348.15, 378.15, 348.15,
-                                                                       378.15, 348.15, 378.15, 348.15],
-                            index=[i for i in range(1, 65)])
+pandapipes.create_junctions(net, nr_junctions=64, pn_bar=18, tfluid_k=378.15, index=[i for i in range(1, 65)])
 
 # create external grid
 pandapipes.create_ext_grid(net, junction=1, p_bar=18, t_k=378.15, name="External grid")
@@ -45,9 +34,8 @@ sink_junction = [3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 24, 26, 28, 30, 32, 34, 37,
                  58, 60, 62, 64]
 load_mcal_h = [40, 100, 40, 40, 40, 40, 40, 40, 20, 40, 60, 20, 40, 40, 40, 40, 40, 40, 60, 40, 40, 40, 40, 40, 40, 40,
                40, 40, 40, 40]
-t_source = net["ext_grid"]["t_k"][0]
 t_load = [net["junction"]["tfluid_k"][junction] for junction in sink_junction]
-mdot = [cal * 0.001162 / (4.182 * 0.001 * (t_source - t_load[index])) for index, cal in enumerate(load_mcal_h)]
+mdot = [cal * 0.001162 / (4.182 * 0.001 * (t_load[index] - 348.15)) for index, cal in enumerate(load_mcal_h)]
 
 # create loads
 pandapipes.create_sinks(net, junctions=sink_junction, mdot_kg_per_s=mdot)
