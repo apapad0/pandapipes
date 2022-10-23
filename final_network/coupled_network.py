@@ -1,4 +1,5 @@
 import pandapower
+import os
 
 import pandapipes
 from pandapipes.multinet.control.controller.multinet_control import P2HControlMultiEnergy
@@ -51,6 +52,7 @@ pipeflow_attributes = {
 # # run simulation:
 if __name__ == "__main__":
     run_control(multinet, **pipeflow_attributes)
+    os.makedirs("csv_files", exist_ok=True)
 
     print(multinet['nets']['power']['res_bus']['vm_pu'])
     print(multinet['nets']['heat']['res_junction'])
@@ -60,5 +62,5 @@ if __name__ == "__main__":
     print(multinet['nets']['heat']['res_pipe']['mdot_from_kg_per_s'])
     print(multinet['nets']['power']['res_ext_grid']['p_mw'])
 
-    # multinet['nets']['power']['res_bus']['vm_pu'].to_csv("bus_voltage.csv")
-    # multinet['nets']['heat']['res_junction']['t_k'].to_csv("temperature.csv")
+    multinet['nets']['power']['res_bus']['vm_pu'].to_csv("csv_files/bus_voltage.csv")
+    multinet['nets']['heat']['res_junction']['t_k'].to_csv("csv_files/temperature.csv")

@@ -70,13 +70,15 @@ for i in range(len(load_buses)):
 # create sgen
 pandapower.create_sgens(net, buses=[5, 9, 11, 12, 13, 14, 17, 18, 22, 25],
                         p_mw=[0.015, 0.020, 0.015, 0.015, 0.015, 0.010, 0.025, 0.030, 0.025, 0.025])
-
+# extra load
 pandapower.create_loads(net, buses=[19, 23, 26], p_mw=[0.005, 0.010, 0.005])
 
 
 # run powerflow
 if __name__ == "__main__":
     pandapower.runpp(net)
+    os.makedirs("csv_files", exist_ok=True)
+
     # cmap_list = [(20, "green"), (50, "yellow"), (60, "red")]
     # cmap, norm = plot.cmap_continuous(cmap_list)
     # lc = plot.create_line_collection(net, net.line.index, zorder=1, cmap=cmap, norm=norm, linewidths=2)
@@ -89,5 +91,4 @@ if __name__ == "__main__":
     print(net['res_bus']['vm_pu'])
     print(net['res_ext_grid']['p_mw'])
 
-    os.makedirs("csv_files", exist_ok=True)
-    net.res_bus.vm_pu.to_csv("csv_files/bus_voltage.csv")
+    net.res_bus.vm_pu.to_csv("csv_files/bus_voltage_plain.csv")
