@@ -70,8 +70,8 @@ for i in range(len(load_buses)):
 # create sgen
 pandapower.create_sgens(net, buses=[5, 9, 11, 12, 13, 14, 17, 18, 22, 25],
                         p_mw=[0.015, 0.020, 0.015, 0.015, 0.015, 0.010, 0.025, 0.030, 0.025, 0.025])
-# extra load
-pandapower.create_loads(net, buses=[19, 23, 26], p_mw=[0.005, 0.010, 0.005])
+# extra sgen
+pandapower.create_sgens(net, buses=[19, 23, 26], p_mw=[0.005, 0.010, 0.005])
 
 
 # run powerflow
