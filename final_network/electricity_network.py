@@ -1,4 +1,5 @@
 import pandapower
+import os
 import pandapower.plotting as plot
 import matplotlib.pyplot as plt
 
@@ -70,18 +71,23 @@ for i in range(len(load_buses)):
 pandapower.create_sgens(net, buses=[5, 9, 11, 12, 13, 14, 17, 18, 22, 25],
                         p_mw=[0.015, 0.020, 0.015, 0.015, 0.015, 0.010, 0.025, 0.030, 0.025, 0.025])
 
-pandapower.create_sgens(net, buses=[19, 23, 26], p_mw=[0.005, 0.010, 0.005])
+pandapower.create_loads(net, buses=[19, 23, 26], p_mw=[0.005, 0.010, 0.005])
 
 
 # run powerflow
 if __name__ == "__main__":
     pandapower.runpp(net)
-    bc = plot.create_bus_collection(net, buses=net.bus.index, size=80, zorder=1)
-    lc = plot.create_line_collection(net, lines=net.line.index, zorder=2)
-    plot.draw_collections([lc, bc])
-    plt.show()
+    # cmap_list = [(20, "green"), (50, "yellow"), (60, "red")]
+    # cmap, norm = plot.cmap_continuous(cmap_list)
+    # lc = plot.create_line_collection(net, net.line.index, zorder=1, cmap=cmap, norm=norm, linewidths=2)
+    # plot.draw_collections([lc], figsize=(8, 6))
+    # bc = plot.create_bus_collection(net, buses=net.bus.index, size=80, zorder=1)
+    # lc = plot.create_line_collection(net, lines=net.line.index, zorder=2)
+    # plot.draw_collections([lc, bc])
+    # plt.show()
 
     print(net['res_bus']['vm_pu'])
     print(net['res_ext_grid']['p_mw'])
 
-    # net.res_bus.vm_pu.to_csv("bus_voltage.csv")
+    os.makedirs("csv_files", exist_ok=True)
+    net.res_bus.vm_pu.to_csv("csv_files/bus_voltage.csv")
