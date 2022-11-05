@@ -1,4 +1,5 @@
 import pandapipes
+import math
 
 # create empty network
 net = pandapipes.create_empty_network(fluid="water")
@@ -22,12 +23,13 @@ pipe_length_m = [4.8569, 6.7268, 4.906, 10.1672, 9.0815, 4.4881, 12.0975, 7.5329
 pipe_diameter_mm = [125, 25, 125, 40, 125, 25, 125, 25, 125, 25, 125, 25, 125, 25, 125, 25, 125, 25, 125, 25, 125, 50,
                     32, 50, 25, 50, 25, 50, 25, 50, 25, 125, 25, 125, 65, 25, 65, 25, 65, 32, 65, 25, 65, 40, 32, 40,
                     25, 65, 25, 65, 25, 65, 25, 65, 25, 65, 25, 65, 25, 65, 25, 65, 25]
+pipe_diameter_m = [x/1000 for x in pipe_diameter_mm]
 
 # create pipes
 pandapipes.create_pipes_from_parameters(net, from_junctions=from_junction, to_junctions=[i for i in range(2, 65)],
                                         length_km=[round(element/1000, 7) for element in pipe_length_m],
-                                        diameter_m=[element/1000 for element in pipe_diameter_mm], k_mm=0.045,
-                                        sections=1, alpha_w_per_m2k=0.027)
+                                        diameter_m=pipe_diameter_m, k_mm=0.045, sections=1,
+                                        alpha_w_per_m2k=[0.027/(math.pi*d) for d in pipe_diameter_m])
 
 # load properties
 sink_junction = [3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 24, 26, 28, 30, 32, 34, 37, 39, 41, 43, 46, 48, 50, 52, 54, 56,
