@@ -1,5 +1,7 @@
-import pandapipes
 import math
+import os
+
+import pandapipes
 
 # create empty network
 net = pandapipes.create_empty_network(fluid="water")
@@ -56,8 +58,9 @@ pipeflow_attributes = {
 # run pipeflow
 if __name__ == "__main__":
     pandapipes.pipeflow(net=net, **pipeflow_attributes)
+    os.makedirs("csv_files", exist_ok=True)
     print(net['res_junction'])
     print(net['res_pipe']['mdot_from_kg_per_s'])
 
-    # net.res_junction.to_csv("junction_pressure_temperature.csv")
-    # net.res_pipe.mdot_from_kg_per_s.to_csv("pipes_mdot.csv")
+    net.res_junction.to_csv("csv_files/junction_pressure_temperature.csv")
+    net.res_pipe.mdot_from_kg_per_s.to_csv("csv_files/pipes_mdot.csv")
