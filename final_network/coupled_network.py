@@ -62,5 +62,5 @@ if __name__ == "__main__":
     print(multinet['nets']['heat']['res_pipe']['mdot_from_kg_per_s'])
     print(multinet['nets']['power']['res_ext_grid']['p_mw'])
 
-    multinet['nets']['power']['res_bus']['vm_pu'].to_csv("csv_files/bus_voltage.csv")
-    multinet['nets']['heat']['res_junction']['t_k'].to_csv("csv_files/temperature.csv")
+    multinet['nets']['power']['res_bus']['vm_pu'].to_csv("csv_files/bus_voltage_coupled.csv")
+    multinet['nets']['heat']['res_junction']['t_k'].to_csv("csv_files/temperature_coupled.csv")
