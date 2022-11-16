@@ -53,11 +53,11 @@ if __name__ == "__main__":
     timesteps = range(45)
     ds = create_datasource("load_cop4.csv")
     ows = create_output_writers(multinet, timesteps)
-    coupled_p2h_const_control(multinet, p2h_id_el_1, p2h_id_heat_1, cop_factor=cop, out_temp=378.15,
+    coupled_p2h_const_control(multinet, p2h_id_el_1, p2h_id_heat_1, cop_factor=cop, out_temp=368.15,
                               name_power_net="power", name_heat_net="heat", profile_name=["load_1"], data_source=ds)
-    coupled_p2h_const_control(multinet, p2h_id_el_2, p2h_id_heat_2, cop_factor=cop, out_temp=378.15,
+    coupled_p2h_const_control(multinet, p2h_id_el_2, p2h_id_heat_2, cop_factor=cop, out_temp=368.15,
                               name_power_net="power", name_heat_net="heat", profile_name=["load_2"], data_source=ds)
-    coupled_p2h_const_control(multinet, p2h_id_el_3, p2h_id_heat_3, cop_factor=cop, out_temp=378.15,
+    coupled_p2h_const_control(multinet, p2h_id_el_3, p2h_id_heat_3, cop_factor=cop, out_temp=368.15,
                               name_power_net="power", name_heat_net="heat", profile_name=["load_3"], data_source=ds)
 
     run_timeseries(multinet, time_steps=timesteps, output_writers=ows, **pipeflow_attributes)
