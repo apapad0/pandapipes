@@ -7,8 +7,9 @@ from pandapower.timeseries import DFData, OutputWriter
 import pandapipes
 from coupled_network import multinet, p2h_id_el_1, p2h_id_heat_1, p2h_id_el_2, p2h_id_heat_2, p2h_id_el_3, \
     p2h_id_heat_3, pipeflow_attributes, cop
-from pandapipes.multinet.timeseries.run_time_series_multinet import run_timeseries
 from pandapipes.multinet.control.controller.multinet_control import coupled_p2h_const_control
+from pandapipes.multinet.timeseries.run_time_series_multinet import run_timeseries
+from temperature_celcius import temp_to_celcius
 
 
 def create_datasource(csv_name):
@@ -61,3 +62,4 @@ if __name__ == "__main__":
                               name_power_net="power", name_heat_net="heat", profile_name=["load_3"], data_source=ds)
 
     run_timeseries(multinet, time_steps=timesteps, output_writers=ows, **pipeflow_attributes)
+    temp_to_celcius(path="timeseries/results/heat/res_junction/t_k")
