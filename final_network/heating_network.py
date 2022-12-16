@@ -26,12 +26,28 @@ pipe_diameter_mm = [125, 25, 125, 40, 125, 25, 125, 25, 125, 25, 125, 25, 125, 2
                     32, 50, 25, 50, 25, 50, 25, 50, 25, 125, 25, 125, 65, 25, 65, 25, 65, 32, 65, 25, 65, 40, 32, 40,
                     25, 65, 25, 65, 25, 65, 25, 65, 25, 65, 25, 65, 25, 65, 25, 65, 25]
 pipe_diameter_m = [x/1000 for x in pipe_diameter_mm]
+alpha = []
+for pipe_nr in range(len(pipe_diameter_mm)):
+    if pipe_diameter_mm[pipe_nr] == 25:
+        lamda = 0.18
+    elif pipe_diameter_mm[pipe_nr] == 32:
+        lamda = 0.189
+    elif pipe_diameter_mm[pipe_nr] == 40:
+        lamda = 0.21
+    elif pipe_diameter_mm[pipe_nr] == 50:
+        lamda = 0.219
+    elif pipe_diameter_mm[pipe_nr] == 65:
+        lamda = 0.236
+    elif pipe_diameter_mm[pipe_nr] == 125:
+        lamda = 0.321
+    temp = lamda / (math.pi * pipe_diameter_m[pipe_nr])
+    alpha.append(temp+0)
 
 # create pipes
 pandapipes.create_pipes_from_parameters(net, from_junctions=from_junction, to_junctions=[i for i in range(2, 65)],
                                         length_km=[element/1000 for element in pipe_length_m],
-                                        diameter_m=pipe_diameter_m, k_mm=0.045, sections=1,
-                                        alpha_w_per_m2k=[0.027/(math.pi*d) for d in pipe_diameter_m], text_k=283.15)
+                                        diameter_m=pipe_diameter_m, k_mm=0.4, sections=1,
+                                        alpha_w_per_m2k=alpha, text_k=283.15)
 
 # load properties
 sink_junction = [3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 24, 26, 28, 30, 32, 34, 37, 39, 41, 43, 46, 48, 50, 52, 54, 56,
