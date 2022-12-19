@@ -27,7 +27,7 @@ p2h_id_el_2 = pandapower.create_load(net_power, bus=17, p_mw=load2, name="power 
 p2h_id_heat_2 = pandapipes.create_source(net_heat, junction=5, mdot_kg_per_s=0, name="power to heat feed in 2")
 # connection 3
 p2h_id_el_3 = pandapower.create_load(net_power, bus=19, p_mw=load3, name="power to heat consumption 3")
-p2h_id_heat_3 = pandapipes.create_source(net_heat, junction=64, mdot_kg_per_s=0, name="power to heat feed in 3")
+p2h_id_heat_3 = pandapipes.create_source(net_heat, junction=46, mdot_kg_per_s=0, name="power to heat feed in 3")
 
 # create coupling controllers:
 p2h_ctrl_1 = P2HControlMultiEnergy(multinet, p2h_id_el_1, p2h_id_heat_1, cop_factor=cop, out_temp=383.15,
@@ -64,3 +64,9 @@ if __name__ == "__main__":
 
     multinet['nets']['power']['res_bus']['vm_pu'].to_csv("csv_files/bus_voltage_coupled.csv")
     multinet['nets']['heat']['res_junction']['t_k'].to_csv("csv_files/temperature_coupled.csv")
+
+    losses = 0
+    for index, row in multinet['nets']['heat']['res_pipe'].iterrows():
+        losses += 4.182 * 0.001 * row['mdot_from_kg_per_s'] * (row['t_from_k'] - row['t_to_k'])
+
+    print(f"Losses: {losses} MW")
