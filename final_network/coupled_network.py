@@ -27,7 +27,7 @@ p2h_id_el_2 = pandapower.create_load(net_power, bus=17, p_mw=load2, name="power 
 p2h_id_heat_2 = pandapipes.create_source(net_heat, junction=5, mdot_kg_per_s=0, name="power to heat feed in 2")
 # connection 3
 p2h_id_el_3 = pandapower.create_load(net_power, bus=19, p_mw=load3, name="power to heat consumption 3")
-p2h_id_heat_3 = pandapipes.create_source(net_heat, junction=46, mdot_kg_per_s=0, name="power to heat feed in 3")
+p2h_id_heat_3 = pandapipes.create_source(net_heat, junction=58, mdot_kg_per_s=0, name="power to heat feed in 3")
 
 # create coupling controllers:
 p2h_ctrl_1 = P2HControlMultiEnergy(multinet, p2h_id_el_1, p2h_id_heat_1, cop_factor=cop, out_temp=383.15,
