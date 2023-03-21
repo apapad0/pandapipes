@@ -13,7 +13,7 @@ class P2HControlMultiEnergy(Controller):
     A controller to be used in a multinet. Converts power consumption to heat production.
     """
 
-    def __init__(self, multinet, element_index_power, element_index_heat, cop_factor, out_temp,
+    def __init__(self, multinet, element_index_power, element_index_heat, cop_factor, in_temp, out_temp,
                  name_power_net='power', name_heat_net='heat', in_service=True, order=0, level=0,
                  drop_same_existing_ctrl=False, initial_run=True, **kwargs):
         super().__init__(multinet, in_service, order, level, drop_same_existing_ctrl=drop_same_existing_ctrl,
@@ -27,6 +27,7 @@ class P2HControlMultiEnergy(Controller):
         self.mw_thermal = None
         self.mdot_kg_per_s = None
         self.applied = False
+        self.in_temp = in_temp
         self.out_temp = out_temp
 
     def initialize_control(self, multinet):
@@ -45,7 +46,7 @@ class P2HControlMultiEnergy(Controller):
 
         connection_junction_index = multinet['nets'][self.name_net_heat]['source']['junction'][0]
         # in_temp = multinet['nets'][self.name_net_heat]['junction']["tfluid_k"][connection_junction_index]
-        temp_diff = self.out_temp - 348.15
+        temp_diff = self.out_temp - self.in_temp
         self.mw_thermal = power_load * self.cop_factor
         self.mdot_kg_per_s = self.mw_thermal / (4.182 * 0.001 * temp_diff)
         self.write_to_net(multinet)
@@ -661,7 +662,7 @@ def coupled_g2p_const_control(multinet, element_index_power, element_index_gas, 
     return const, g2p
 
 
-def coupled_p2h_const_control(multinet, element_index_power, element_index_heat, cop_factor, out_temp=373.15,
+def coupled_p2h_const_control(multinet, element_index_power, element_index_heat, cop_factor, in_temp, out_temp=373.15,
                               name_power_net='power', name_heat_net='heat', profile_name=None,
                               data_source=None, scale_factor=1.0, in_service=True,
                               order=(0, 1), level=0, drop_same_existing_ctrl=False,
@@ -675,7 +676,7 @@ def coupled_p2h_const_control(multinet, element_index_power, element_index_heat,
         drop_same_existing_ctrl=drop_same_existing_ctrl, matching_params=matching_params,
         initial_run=initial_run, **kwargs)
 
-    p2h = P2HControlMultiEnergy(multinet, element_index_power, element_index_heat, cop_factor, out_temp,
+    p2h = P2HControlMultiEnergy(multinet, element_index_power, element_index_heat, cop_factor, in_temp, out_temp,
                                 name_power_net, name_heat_net, in_service, order[1], level,
                                 drop_same_existing_ctrl=drop_same_existing_ctrl,
                                 initial_run=initial_run, **kwargs)
