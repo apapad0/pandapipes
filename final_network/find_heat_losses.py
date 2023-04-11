@@ -12,8 +12,8 @@ from pandapipes.multinet.control.run_control_multinet import run_control
 from pandapipes.multinet.create_multinet import create_empty_multinet, add_net_to_multinet
 from pandapipes.pipeflow import PipeflowNotConverged
 
-BRANCH_1 = [i for i in range(23, 33)]
-BRANCH_2 = [i for i in range(33, 65)]
+BRANCH_1 = [i for i in [24, 28, 30, 32]]
+BRANCH_2 = [i for i in [34, 37, 39, 41, 43, 46, 48, 50, 52, 54, 56, 58, 60, 62, 64]]
 
 COP = 2
 CP = 4.182 * 0.001
@@ -44,19 +44,18 @@ def create_multinet(power_net, heat_net, junction, bus=[5, 17, 19]):
                                              name="power to heat feed in 3")
 
     # create coupling controllers:
-    P2HControlMultiEnergy(multinet, p2h_id_el_1, p2h_id_heat_1, cop_factor=COP, out_temp=383.15, name_power_net="power",
-                          name_heat_net="heat")
+    P2HControlMultiEnergy(multinet, p2h_id_el_1, p2h_id_heat_1, cop_factor=COP, in_temp=348.15, out_temp=383.15,
+                          name_power_net="power", name_heat_net="heat")
 
-    P2HControlMultiEnergy(multinet, p2h_id_el_2, p2h_id_heat_2, cop_factor=COP, out_temp=383.15, name_power_net="power",
-                          name_heat_net="heat")
+    P2HControlMultiEnergy(multinet, p2h_id_el_2, p2h_id_heat_2, cop_factor=COP, in_temp=348.15, out_temp=383.15,
+                          name_power_net="power", name_heat_net="heat")
 
-    P2HControlMultiEnergy(multinet, p2h_id_el_3, p2h_id_heat_3, cop_factor=COP, out_temp=383.15, name_power_net="power",
-                          name_heat_net="heat")
+    P2HControlMultiEnergy(multinet, p2h_id_el_3, p2h_id_heat_3, cop_factor=COP, in_temp=348.15, out_temp=383.15,
+                          name_power_net="power", name_heat_net="heat")
     return multinet
 
 
 def create_csv(file_name, data):
-
     with open(file_name, 'w', newline='') as csvfile:
         fieldnames = ['junctions', 'losses']
         writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
