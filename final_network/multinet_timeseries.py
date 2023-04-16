@@ -6,7 +6,7 @@ from pandapower.timeseries import DFData, OutputWriter
 
 import pandapipes
 from coupled_network import multinet, p2h_id_el_1, p2h_id_heat_1, p2h_id_el_2, p2h_id_heat_2, p2h_id_el_3, \
-    p2h_id_heat_3, pipeflow_attributes, cop
+    p2h_id_heat_3, pipeflow_attributes
 from pandapipes.multinet.control.controller.multinet_control import coupled_p2h_const_control
 from pandapipes.multinet.timeseries.run_time_series_multinet import run_timeseries
 from temperature_celcius import temp_to_celcius
@@ -53,12 +53,15 @@ def create_output_writers(multinet, time_steps=None):
 if __name__ == "__main__":
     timesteps = range(45)
     ds = create_datasource("load_cop4.csv")
+    cop = 4
+    in_temp = 348.15
+    out_temp = 383.15
     ows = create_output_writers(multinet, timesteps)
-    coupled_p2h_const_control(multinet, p2h_id_el_1, p2h_id_heat_1, cop_factor=cop, in_temp=348.15, out_temp=368.15,
+    coupled_p2h_const_control(multinet, p2h_id_el_1, p2h_id_heat_1, cop_factor=cop, in_temp=in_temp, out_temp=out_temp,
                               name_power_net="power", name_heat_net="heat", profile_name=["load_1"], data_source=ds)
-    coupled_p2h_const_control(multinet, p2h_id_el_2, p2h_id_heat_2, cop_factor=cop, in_temp=348.15, out_temp=368.15,
+    coupled_p2h_const_control(multinet, p2h_id_el_2, p2h_id_heat_2, cop_factor=cop, in_temp=in_temp, out_temp=out_temp,
                               name_power_net="power", name_heat_net="heat", profile_name=["load_2"], data_source=ds)
-    coupled_p2h_const_control(multinet, p2h_id_el_3, p2h_id_heat_3, cop_factor=cop, in_temp=348.15, out_temp=368.15,
+    coupled_p2h_const_control(multinet, p2h_id_el_3, p2h_id_heat_3, cop_factor=cop, in_temp=in_temp, out_temp=out_temp,
                               name_power_net="power", name_heat_net="heat", profile_name=["load_3"], data_source=ds)
 
     run_timeseries(multinet, time_steps=timesteps, output_writers=ows, **pipeflow_attributes)
