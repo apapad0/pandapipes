@@ -1,18 +1,16 @@
 import pandapower
 import os
-import pandapower.plotting as plot
-import matplotlib.pyplot as plt
+from create_plots import *
 
 # create empty network
 net = pandapower.create_empty_network()
 
 # create buses
 pandapower.create_buses(net, nr_buses=26, vn_kv=list([20.] + [0.4 for i in range(25)]),
-                        index=list([i for i in range(1, 27)]))
+                        index=list([i for i in range(1, 27)]), name=[f"Bus {i}" for i in range(1, 27)])
 
 # create Feeder
 pandapower.create_ext_grid(net, bus=1, vm_pu=1., va_degree=0, name='Feeder', in_service=True)
-
 
 # create transformer
 pandapower.create_transformer_from_parameters(net, hv_bus=1, lv_bus=2, sn_mva=0.25, vn_hv_kv=20., vn_lv_kv=0.4,
@@ -30,7 +28,6 @@ r_ohm2 = 0.9393
 x_ohm2 = 0.0909
 c_nf2 = 0
 max_i2 = 0.120
-
 
 # create backbone lines
 pandapower.create_lines_from_parameters(net, from_buses=[2, 3, 4, 5, 6, 12, 13, 14, 18],
@@ -64,8 +61,8 @@ load_p_mw = [0.005, 0.0075, 0.0125, 0.005, 0.0075, 0.010, 0.005, 0.010, 0.0075, 
 cosphi = 0.95
 # create loads
 for i in range(len(load_buses)):
-    pandapower.create_load_from_cosphi(net, bus=load_buses[i], sn_mva=load_p_mw[i]/cosphi, cos_phi=cosphi,
-                                       mode="underexcited", index=load_buses[i])
+    pandapower.create_load_from_cosphi(net, bus=load_buses[i], sn_mva=load_p_mw[i] / cosphi, cos_phi=cosphi,
+                                       mode="underexcited", index=load_buses[i], name="Load")
 
 # create sgen
 pandapower.create_sgens(net, buses=[5, 9, 11, 12, 13, 14, 17, 18, 22, 25],
@@ -73,22 +70,19 @@ pandapower.create_sgens(net, buses=[5, 9, 11, 12, 13, 14, 17, 18, 22, 25],
 # extra sgen
 pandapower.create_sgens(net, buses=[19, 23, 26], p_mw=[0.005, 0.010, 0.005])
 
-
 # run powerflow
 if __name__ == "__main__":
     pandapower.runpp(net)
     os.makedirs("csv_files", exist_ok=True)
 
-    # cmap_list = [(20, "green"), (50, "yellow"), (60, "red")]
-    # cmap, norm = plot.cmap_continuous(cmap_list)
-    # lc = plot.create_line_collection(net, net.line.index, zorder=1, cmap=cmap, norm=norm, linewidths=2)
-    # plot.draw_collections([lc], figsize=(8, 6))
-    # bc = plot.create_bus_collection(net, buses=net.bus.index, size=80, zorder=1)
-    # lc = plot.create_line_collection(net, lines=net.line.index, zorder=2)
-    # plot.draw_collections([lc, bc])
-    # plt.show()
-
     print(net['res_bus']['vm_pu'])
     print(net['res_ext_grid']['p_mw'])
 
     net.res_bus.vm_pu.to_csv("csv_files/bus_voltage_plain.csv")
+
+    # simple_plot(net)
+    # simple_plotly(net)
+    # res_colored_plot(net)
+    # collections_figure(net)
+    # trace_figure(net)
+    trace_figure_colored(net)
