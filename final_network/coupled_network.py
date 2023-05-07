@@ -1,5 +1,6 @@
 import pandapower
 import os
+import pandas as pd
 
 import pandapipes
 from pandapipes.multinet.control.controller.multinet_control import P2HControlMultiEnergy
@@ -30,14 +31,14 @@ p2h_id_el_3 = pandapower.create_load(net_power, bus=19, p_mw=load3, name="power 
 p2h_id_heat_3 = pandapipes.create_source(net_heat, junction=58, mdot_kg_per_s=0, name="power to heat feed in 3")
 
 # create coupling controllers:
-p2h_ctrl_1 = P2HControlMultiEnergy(multinet, p2h_id_el_1, p2h_id_heat_1, cop_factor=cop, in_temp=348.15, out_temp=383.15,
-                                   name_power_net="power", name_heat_net="heat")
+p2h_ctrl_1 = P2HControlMultiEnergy(multinet, p2h_id_el_1, p2h_id_heat_1, cop_factor=cop, in_temp=348.15,
+                                   out_temp=383.15, name_power_net="power", name_heat_net="heat")
 
-p2h_ctrl_2 = P2HControlMultiEnergy(multinet, p2h_id_el_2, p2h_id_heat_2, cop_factor=cop, in_temp=348.15, out_temp=383.15,
-                                   name_power_net="power", name_heat_net="heat")
+p2h_ctrl_2 = P2HControlMultiEnergy(multinet, p2h_id_el_2, p2h_id_heat_2, cop_factor=cop, in_temp=348.15,
+                                   out_temp=383.15, name_power_net="power", name_heat_net="heat")
 
-p2h_ctrl_3 = P2HControlMultiEnergy(multinet, p2h_id_el_3, p2h_id_heat_3, cop_factor=cop, in_temp=348.15, out_temp=383.15,
-                                   name_power_net="power", name_heat_net="heat")
+p2h_ctrl_3 = P2HControlMultiEnergy(multinet, p2h_id_el_3, p2h_id_heat_3, cop_factor=cop, in_temp=348.15,
+                                   out_temp=383.15, name_power_net="power", name_heat_net="heat")
 
 pipeflow_attributes = {
     "stop_condition": "tol",
@@ -48,6 +49,30 @@ pipeflow_attributes = {
     "nonlinear_method": "automatic",
     "tol_res": 1e-4
 }
+
+
+def heat_backbone_stats(path: str):
+    branch1 = [1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 23, 25, 27, 29, 31]
+    branch2 = [1, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 33, 35, 36, 38, 40, 42, 44, 49, 51, 53, 55, 57, 59, 61, 63]
+    df = pd.read_csv(path, index_col=[0])
+
+    branch_stats = {
+        "temp1": [],
+        "temp2": [],
+        "pressure1": [],
+        "pressure2": []
+    }
+    for index, row in df.iterrows():
+        if index in branch1:
+            branch_stats["temp1"].append(row["t_k"] - 273.15)
+            branch_stats["pressure1"].append(row["p_bar"])
+        if index in branch2:
+            branch_stats["temp2"].append(row["t_k"] - 273.15)
+            branch_stats["pressure2"].append(row["p_bar"])
+
+    data = pd.DataFrame(dict([(key, pd.Series(value)) for key, value in branch_stats.items()]))
+    data.to_excel(path.split(".csv")[0] + "_per_branch.xlsx")
+
 
 # # run simulation:
 if __name__ == "__main__":
@@ -63,10 +88,12 @@ if __name__ == "__main__":
     print(multinet['nets']['power']['res_ext_grid']['p_mw'])
 
     multinet['nets']['power']['res_bus']['vm_pu'].to_csv("csv_files/bus_voltage_coupled.csv")
-    multinet['nets']['heat']['res_junction']['t_k'].to_csv("csv_files/temperature_coupled.csv")
+    multinet['nets']['heat']['res_junction'].to_csv("csv_files/temperature_pressure_coupled.csv")
 
     losses = 0
     for index, row in multinet['nets']['heat']['res_pipe'].iterrows():
         losses += 4.182 * 0.001 * row['mdot_from_kg_per_s'] * (row['t_from_k'] - row['t_to_k'])
 
     print(f"Losses: {losses} MW")
+
+    heat_backbone_stats(path="csv_files/temperature_pressure_coupled.csv")
