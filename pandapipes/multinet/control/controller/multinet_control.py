@@ -13,22 +13,22 @@ class P2HControlMultiEnergy(Controller):
     A controller to be used in a multinet. Converts power consumption to heat production.
     """
 
-    def __init__(self, multinet, element_index_power, element_index_heat, efficiency,
+    def __init__(self, multinet, element_index_power, element_index_heat, cop_factor, temp_diff,
                  name_power_net='power', name_heat_net='heat',
                  in_service=True, order=0, level=0,
                  drop_same_existing_ctrl=False, initial_run=True, **kwargs):
         super().__init__(multinet, in_service, order, level, drop_same_existing_ctrl=drop_same_existing_ctrl,
-                         initial_run=initial_run, ** kwargs)
+                         initial_run=initial_run, **kwargs)
 
         self.elm_idx_power = element_index_power
-        self.elm_idx_water = element_index_heat
+        self.elm_idx_heat = element_index_heat
         self.name_net_power = name_power_net
         self.name_net_heat = name_heat_net
-        self.efficiency = efficiency
-        self.mdot_kg_per_s = None
-        self.fluid = get_fluid(multinet['nets'][name_heat_net])
-        # self.fluid_calorific_value = self.fluid.get_property('hhv')  # TODO
+        self.cop_factor = cop_factor
+        self.mw_thermal = None
+        self.mdot_kg_per_s_out = None
         self.applied = False
+        self.temp_diff = temp_diff
 
     def initialize_control(self, multinet):
         self.applied = False
@@ -43,22 +43,21 @@ class P2HControlMultiEnergy(Controller):
         except (ValueError, TypeError, InvalidIndexError):
             power_load = multinet['nets'][self.name_net_power].load.loc[self.elm_idx_power, 'p_mw'].values \
                          * multinet['nets'][self.name_net_power].load.loc[self.elm_idx_power, 'scaling'].values
-        self.mdot_kg_per_s = power_load * 3 * self.efficiency
+        self.mw_thermal = power_load * self.cop_factor
+        self.mdot_kg_per_s_out = self.mw_thermal / (4.182 * 0.001 * self.temp_diff)
         self.write_to_net(multinet)
         self.applied = True
 
     def write_to_net(self, multinet):
         try:
-            multinet['nets'][self.name_net_heat].source.at[self.elm_idx_water, 'mdot_kg_per_s'] \
-                = self.mdot_kg_per_s
+            multinet['nets'][self.name_net_heat].source.at[self.elm_idx_heat, 'mdot_kg_per_s_out'] \
+                = self.mdot_kg_per_s_out
         except (ValueError, TypeError, InvalidIndexError):
-            multinet['nets'][self.name_net_heat].source.loc[self.elm_idx_water, 'mdot_kg_per_s'] = self.mdot_kg_per_s
+            multinet['nets'][self.name_net_heat].source.loc[
+                self.elm_idx_heat, 'mdot_kg_per_s_out'] = self.mdot_kg_per_s_out
 
     def is_converged(self, multinet):
         return self.applied
-
-    # def conversion_factor_mw_to_kgps(self):
-    #     return 1e3 / (self.fluid_calorific_value * 3600)
 
 
 class H2PControlMultiEnergy(Controller):
@@ -96,9 +95,9 @@ class H2PControlMultiEnergy(Controller):
         self.name_net_power = name_power_net
         self.name_net_heat = name_heat_net
         self.efficiency = efficiency
-        self.mdot_kg_per_s = None
+        self.mdot_kg_per_s_out = None
+        self.mw_thermal = None
         self.fluid = get_fluid(multinet['nets'][name_heat_net])
-        # self.fluid_calorific_value = self.fluid.get_property('hhv')
         self.el_power_led = calc_heat_from_power
         self.applied = False
 
@@ -120,27 +119,23 @@ class H2PControlMultiEnergy(Controller):
                         * multinet['nets'][self.name_net_power][self.elm_type_power].loc[
                               self.elm_idx_power, 'scaling'].values[:]
 
-        self.heat_cons = power_gen * 3 * self.efficiency
+        self.mw_thermal = power_gen * self.efficiency
         self.write_to_net(multinet)
         self.applied = True
 
     def write_to_net(self, multinet):
         try:
             multinet['nets'][self.name_net_heat].sink.at[self.elm_idx_heat,
-                                                        'mdot_kg_per_s'] = self.heat_cons
+                                                         'mdot_kg_per_s_out'] = self.mw_thermal
         except (ValueError, TypeError, InvalidIndexError):
             multinet['nets'][self.name_net_heat].sink.loc[self.elm_idx_heat,
-                                                         'mdot_kg_per_s'] = self.heat_cons
+                                                          'mdot_kg_per_s_out'] = self.mw_thermal
 
     def is_converged(self, multinet):
         return self.applied
 
-    # def conversion_factor_kgps_to_mw(self):
-    #     return self.fluid_calorific_value * 3600 / 1e3
-
 
 class P2GControlMultiEnergy(Controller):
-
     """
     A controller to be used in a multinet. Converts power consumption to gas production.
 
@@ -190,6 +185,7 @@ class P2GControlMultiEnergy(Controller):
     :param kwargs: optional additional controller arguments that were implemented by users
     :type kwargs: any
     """
+
     def __init__(self, multinet, element_index_power, element_index_gas, efficiency,
                  name_power_net='power', name_gas_net='gas',
                  in_service=True, order=0, level=0,
@@ -247,7 +243,6 @@ class P2GControlMultiEnergy(Controller):
 
 
 class G2PControlMultiEnergy(Controller):
-
     """
     A controller to be used in a multinet. Connects power generation and gas consumption.
 
@@ -346,14 +341,14 @@ class G2PControlMultiEnergy(Controller):
         if self.el_power_led:
             try:
                 power_gen = multinet['nets'][self.name_net_power][self.elm_type_power].at[
-                    self.elm_idx_power, 'p_mw'] * multinet['nets'][self.name_net_power][
-                    self.elm_type_power].at[self.elm_idx_power, 'scaling']
+                                self.elm_idx_power, 'p_mw'] * multinet['nets'][self.name_net_power][
+                                self.elm_type_power].at[self.elm_idx_power, 'scaling']
 
             except (ValueError, TypeError, InvalidIndexError):
                 power_gen = multinet['nets'][self.name_net_power][self.elm_type_power].loc[
                                 self.elm_idx_power, 'p_mw'].values[:] \
                             * multinet['nets'][self.name_net_power][self.elm_type_power].loc[
-                                self.elm_idx_power, 'scaling'].values[:]
+                                  self.elm_idx_power, 'scaling'].values[:]
 
             self.gas_cons = power_gen / (self.conversion_factor_kgps_to_mw() * self.efficiency)
 
@@ -398,7 +393,6 @@ class G2PControlMultiEnergy(Controller):
 
 
 class GasToGasConversion(Controller):
-
     """
     A controller to be used in a multinet with two gas nets that have different gases.
 
@@ -459,6 +453,7 @@ class GasToGasConversion(Controller):
                          drop_same_existing_ctrl=drop_same_existing_ctrl, initial_run=initial_run,
                          **kwargs)
 
+        self.mdot_kg_per_s_out = None
         self.element_index_from = element_index_from
         self.element_index_to = element_index_to
         self.name_net_from = name_gas_net_from
