@@ -662,7 +662,7 @@ def coupled_g2p_const_control(multinet, element_index_power, element_index_gas, 
     return const, g2p
 
 
-def coupled_p2h_const_control(multinet, element_index_power, element_index_heat, cop_factor, in_temp, out_temp=373.15,
+def coupled_p2h_const_control(multinet, element_index_power, element_index_heat, cop_factor, in_temp, out_temp,
                               name_power_net='power', name_heat_net='heat', profile_name=None,
                               data_source=None, scale_factor=1.0, in_service=True,
                               order=(0, 1), level=0, drop_same_existing_ctrl=False,
